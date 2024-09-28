@@ -58,9 +58,9 @@ public final class MecanumDrive {
         // TODO: fill in these values based on
         //   see https://ftc-docs.firstinspires.org/en/latest/programming_resources/imu/imu.html?highlight=imu#physical-hub-mounting
         public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
-                RevHubOrientationOnRobot.LogoFacingDirection.UP;
+                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
         public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+                RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
         //https://rr.brott.dev/docs/v1-0/tuning/
         //TODO: do above http://192.168.43.1:8080/dash dashboard
@@ -68,13 +68,13 @@ public final class MecanumDrive {
 
         // drive model parameters
         public double inPerTick = 0.0030356809;
-        public double lateralInPerTick = 0.004527784660408587;
-        public double trackWidthTicks = 0;
+        public double lateralInPerTick = 0.00446898309188449;
+        public double trackWidthTicks = 2693.295632950166;
 
         // feedforward parameters (in tick units)
-        public double kS = 1.460322185006806;
-        public double kV = 0.0009875532504480368;
-        public double kA = 0;
+        public double kS = 1.5900554487576526;
+        public double kV = 0.0009493101523025683;
+        public double kA = 0.00001;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 50;
@@ -87,12 +87,12 @@ public final class MecanumDrive {
 
         // path controller gains
         public double axialGain = 0.0;
-        public double lateralGain = 0.0;
-        public double headingGain = 0.0; // shared with turn
+        public double lateralGain = 1;
+        public double headingGain = 4; // shared with turn
 
         public double axialVelGain = 0.0;
-        public double lateralVelGain = 0.0;
-        public double headingVelGain = 0.0; // shared with turn
+        public double lateralVelGain = 1;
+        public double headingVelGain = 1.5; // shared with turn
     }
 
     public static Params PARAMS = new Params();
