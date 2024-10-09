@@ -32,6 +32,7 @@ import com.acmerobotics.roadrunner.ftc.PositionVelocityPair;
 import com.acmerobotics.roadrunner.ftc.RawEncoder;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -110,7 +111,7 @@ public final class MecanumDrive {
     public final AccelConstraint defaultAccelConstraint =
             new ProfileAccelConstraint(PARAMS.minProfileAccel, PARAMS.maxProfileAccel);
 
-    public final DcMotorEx leftFront, leftBack, rightBack, rightFront;
+    public final DcMotorEx leftFront, leftBack, rightBack, rightFront, rightBigArm, leftBigArm, smallArm, intake;
 
     public final VoltageSensor voltageSensor;
 
@@ -226,10 +227,24 @@ public final class MecanumDrive {
         rightBack = hardwareMap.get(DcMotorEx.class, "backRight");
         rightFront = hardwareMap.get(DcMotorEx.class, "frontRight");
 
+        leftBigArm = hardwareMap.get(DcMotorEx.class, "leftBigArm");
+        rightBigArm = hardwareMap.get(DcMotorEx.class, "rightBigArm");
+        smallArm = hardwareMap.get(DcMotorEx.class, "smallArmMotor");
+        intake = hardwareMap.get(DcMotorEx.class, "intake");
+
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        leftBigArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBigArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        smallArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        leftBigArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBigArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        smallArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // TODO: reverse motor directions if needed
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
