@@ -242,15 +242,20 @@ public final class MecanumDrive {
         smallArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        leftBigArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightBigArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        smallArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //Large Arm
+        //down pos = -34 deg -20 tick
+        // straight up 90 deg 2852 tick
+
+        //Small Arm
+        //home 137 deg 9 tick
+        // 0 deg -3100 tick
 
         // TODO: reverse motor directions if needed
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
         rightBack.setDirection(DcMotorSimple.Direction.FORWARD);
         rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightBigArm.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // TODO: make sure your config has an IMU with this name (can be BNO or BHI)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
