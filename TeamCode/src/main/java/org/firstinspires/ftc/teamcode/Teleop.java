@@ -1,12 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.canvas.Rotation;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Rotation2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp(name = "Teleop")
 public class Teleop extends LinearOpMode {
+
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -43,10 +47,31 @@ public class Teleop extends LinearOpMode {
 
             telemetry.addData("Big Arm pos", bigArmEnc);
             telemetry.addData("Small Arm pos", smallArmEnc);
+            telemetry.addData("Rotation", getArmDegrees(bigArmEnc));
+            telemetry.addData("Motor Power",gamepad2.left_stick_y);
 
-            drive.leftBigArm.setPower(-gamepad2.left_stick_y);
-            drive.rightBigArm.setPower(-gamepad2.left_stick_y);
-            drive.smallArm.setPower(gamepad2.right_stick_y);
+            //Large Arm
+            //down pos = -34 deg -20 tick
+            // straight up 90 deg 2852 tick
+            // 0.043175 degrees per tick
+
+
+
+            //Small Arm
+            //home 137 deg 9 tick
+            // 0 deg -3100 tick
+
+            if(Math.abs(gamepad2.left_stick_y) > .05){
+                drive.leftBigArm.setPower(-gamepad2.left_stick_y);
+                drive.rightBigArm.setPower(-gamepad2.left_stick_y);
+            }
+            else{
+                drive.leftBigArm.setPower(getArmFeedForward(getArmDegrees(bigArmEnc)));
+                drive.rightBigArm.setPower(getArmFeedForward(getArmDegrees(bigArmEnc)));
+            }
+
+
+            drive.smallArm.setPower(gamepad2.right_stick_y/1.35);
             drive.intake.setPower(gamepad2.right_trigger);
 
             if(gamepad2.left_trigger >= 0.75){
@@ -58,6 +83,24 @@ public class Teleop extends LinearOpMode {
             telemetry.update();
 
 
+        }
+    }
+
+    double getArmDegrees(int encoder){
+        double intitialArmAngle = -37;
+        return intitialArmAngle + encoder*0.04453015;
+    }
+
+    double getArmFeedForward(double angle){
+        double initial = .25;
+
+        double radians = angle*(Math.PI/180);
+
+        if(angle < 90){
+            return Math.cos(radians)*initial;
+        }
+        else{
+            return Math.cos(radians)*initial;
         }
     }
 }
