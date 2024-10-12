@@ -49,7 +49,9 @@ public class Teleop extends LinearOpMode {
             telemetry.addData("Small Arm pos", smallArmEnc);
             telemetry.addData("Rotation", getArmDegrees(bigArmEnc));
             telemetry.addData("Motor Power",gamepad2.left_stick_y);
-
+            telemetry.addData("Small Arm Rot", getSmallArmDegrees(smallArmEnc));
+            telemetry.addData("Small Arm Real Angle", getSmallArmRealAngle(smallArmEnc, bigArmEnc));
+            telemetry.addData("Small Motor Power",drive.smallArm.getPower());
             //Large Arm
             //down pos = -34 deg -20 tick
             // straight up 90 deg 2852 tick
@@ -57,7 +59,7 @@ public class Teleop extends LinearOpMode {
 
 
 
-            //Small Arm
+            //Small Arm;
             //home 137 deg 9 tick
             // 0 deg -3100 tick
 
@@ -71,7 +73,16 @@ public class Teleop extends LinearOpMode {
             }
 
 
-            drive.smallArm.setPower(gamepad2.right_stick_y/1.35);
+            //drive.smallArm.setPower(gamepad2.right_stick_y/1.35);
+            drive.smallArm.getPower();
+            if(Math.abs(gamepad2.right_stick_y) > 0.05){
+                drive.smallArm.setPower(gamepad2.right_stick_y/1.35);
+            } else {
+                drive.smallArm.setPower(getSmallArmFeedForward(getSmallArmRealAngle(smallArmEnc,bigArmEnc)));
+            }
+
+
+
             drive.intake.setPower(gamepad2.right_trigger);
 
             if(gamepad2.left_trigger >= 0.75){
@@ -91,8 +102,32 @@ public class Teleop extends LinearOpMode {
         return intitialArmAngle + encoder*0.04453015;
     }
 
+    double getSmallArmDegrees(int encoder){
+        double initialSmallArmAngle = 142;
+        return initialSmallArmAngle + encoder*0.04453015;
+    }
+
+    double getSmallArmRealAngle(int small, int big){
+         return getSmallArmDegrees(small) + getArmDegrees(big);
+    }
+
+
+
     double getArmFeedForward(double angle){
         double initial = .25;
+
+        double radians = angle*(Math.PI/180);
+
+        if(angle < 90){
+            return Math.cos(radians)*initial;
+        }
+        else{
+            return Math.cos(radians)*initial;
+        }
+    }
+
+    double getSmallArmFeedForward(double angle){
+        double initial = .46;
 
         double radians = angle*(Math.PI/180);
 
