@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.Rotation2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import org.firstinspires.ftc.teamcode.PIDController;
 
 @TeleOp(name = "Teleop")
 public class Teleop extends LinearOpMode {
@@ -16,6 +17,7 @@ public class Teleop extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Pose2d beginPose = new Pose2d(0, 0, 0);
         MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
+        PIDController pid = new PIDController(.1, 0, 0);
 
 
         waitForStart();
@@ -63,14 +65,34 @@ public class Teleop extends LinearOpMode {
             //home 137 deg 9 tick
             // 0 deg -3100 tick
 
-            if(Math.abs(gamepad2.left_stick_y) > .05){
-                drive.leftBigArm.setPower(-gamepad2.left_stick_y);
-                drive.rightBigArm.setPower(-gamepad2.left_stick_y);
+//            if(Math.abs(gamepad2.left_stick_y) > .05){
+//                drive.leftBigArm.setPower(-gamepad2.left_stick_y);
+//                drive.rightBigArm.setPower(-gamepad2.left_stick_y);
+//            }
+//            else{
+//                drive.leftBigArm.setPower(getArmFeedForward(getArmDegrees(bigArmEnc)));
+//                drive.rightBigArm.setPower(getArmFeedForward(getArmDegrees(bigArmEnc)));
+//            }
+
+            double bigArmSpeed = 0;
+
+            double bigArmFF = getArmFeedForward(getArmDegrees(bigArmEnc));
+            double goal = 0;
+            telemetry.addData("FF", bigArmFF);
+            if(gamepad2.left_bumper){
+                goal = 0;
             }
-            else{
-                drive.leftBigArm.setPower(getArmFeedForward(getArmDegrees(bigArmEnc)));
-                drive.rightBigArm.setPower(getArmFeedForward(getArmDegrees(bigArmEnc)));
+            else if(gamepad2.right_bumper){
+                goal = 50;
             }
+            else {
+                bigArmSpeed = bigArmFF;
+            }
+            double pidValue = pid.calculate(goal, getArmDegrees(bigArmEnc));
+            bigArmSpeed = pidValue;
+            telemetry.addData("PID Output", pidValue);
+            drive.leftBigArm.setPower(bigArmSpeed);
+            drive.rightBigArm.setPower(bigArmSpeed);
 
 
             //drive.smallArm.setPower(gamepad2.right_stick_y/1.35);
