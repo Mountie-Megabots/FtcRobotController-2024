@@ -26,20 +26,34 @@ public class Arm {
     }
 
     public double getPositionDegrees(){
-        return 0;
+        double initialArmAngle = startingPose;
+        if(base != null) {
+            initialArmAngle = base.startingPose;
+        }
+        return initialArmAngle + encoder.getCurrentPosition()*0.04453015;
     }
 
+
     private double getGravityFeedForward(){
-        double angle = encoder.getCurrentPosition();
+        double angle = getPositionDegrees();
+        double initial = .25;
 
         // If this Arm is connected to another arm segment
         if(base != null){
             angle+= base.getPositionDegrees();
+            initial = .46;
+        }
+
+        double radians = angle*(Math.PI/180);
+
+        if(angle < 90){
+            return Math.cos(radians)*initial;
+        }
+        else{
+            return Math.cos(radians)*initial;
         }
 
         // Rest of the FeedForward code goes here.
-
-        return 0;
     }
 
     /*
