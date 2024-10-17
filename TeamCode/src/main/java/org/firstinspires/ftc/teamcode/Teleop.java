@@ -18,6 +18,8 @@ public class Teleop extends LinearOpMode {
         Pose2d beginPose = new Pose2d(0, 0, 0);
         MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
         PIDController pid = new PIDController(.1, 0, 0);
+        Arm base = new Arm(drive.leftBigArm, drive.leftFront, -37);
+        Arm small = new Arm(drive.smallArm, drive.smallArm, 142);
 
 
         waitForStart();
@@ -47,13 +49,16 @@ public class Teleop extends LinearOpMode {
             int bigArmEnc = drive.leftFront.getCurrentPosition();
             int smallArmEnc = drive.smallArm.getCurrentPosition();
 
-            telemetry.addData("Big Arm pos", bigArmEnc);
-            telemetry.addData("Small Arm pos", smallArmEnc);
-            telemetry.addData("Rotation", getArmDegrees(bigArmEnc));
-            telemetry.addData("Motor Power",gamepad2.left_stick_y);
-            telemetry.addData("Small Arm Rot", getSmallArmDegrees(smallArmEnc));
-            telemetry.addData("Small Arm Real Angle", getSmallArmRealAngle(smallArmEnc, bigArmEnc));
-            telemetry.addData("Small Motor Power",drive.smallArm.getPower());
+            base.writeTelemetry(telemetry, "BigArm");
+            small.writeTelemetry(telemetry, "SmallArm");
+
+//            telemetry.addData("Big Arm pos", bigArmEnc);
+//            telemetry.addData("Small Arm pos", smallArmEnc);
+//            telemetry.addData("Rotation", getArmDegrees(bigArmEnc));
+//            telemetry.addData("Motor Power",gamepad2.left_stick_y);
+//            telemetry.addData("Small Arm Rot", getSmallArmDegrees(smallArmEnc));
+//            telemetry.addData("Small Arm Real Angle", getSmallArmRealAngle(smallArmEnc, bigArmEnc));
+//            telemetry.addData("Small Motor Power",drive.smallArm.getPower());
             //Large Arm
             //down pos = -34 deg -20 tick
             // straight up 90 deg 2852 tick
@@ -74,42 +79,37 @@ public class Teleop extends LinearOpMode {
 //                drive.rightBigArm.setPower(getArmFeedForward(getArmDegrees(bigArmEnc)));
 //            }
 
-            double bigArmSpeed = 0;
-
-            double bigArmFF = getArmFeedForward(getArmDegrees(bigArmEnc));
-            double goal = 0;
-            telemetry.addData("FF", bigArmFF);
             if(gamepad2.left_bumper){
-                goal = 0;
+                base.setTarget(0);
             }
             else if(gamepad2.right_bumper){
-                goal = 50;
-            }
-            else {
-                bigArmSpeed = bigArmFF;
-            }
-            double pidValue = pid.calculate(goal, getArmDegrees(bigArmEnc));
-            bigArmSpeed = pidValue;
-            telemetry.addData("PID Output", pidValue);
-            drive.leftBigArm.setPower(bigArmSpeed);
-            drive.rightBigArm.setPower(bigArmSpeed);
-
-
-            //drive.smallArm.setPower(gamepad2.right_stick_y/1.35);
-            drive.smallArm.getPower();
-            if(Math.abs(gamepad2.right_stick_y) > 0.05){
-                drive.smallArm.setPower(gamepad2.right_stick_y/1.35);
-            } else {
-                drive.smallArm.setPower(getSmallArmFeedForward(getSmallArmRealAngle(smallArmEnc,bigArmEnc)));
+                base.setTarget(50);
             }
 
+            small.setManual(gamepad2.right_stick_y);
+            base.setManual(gamepad2.left_stick_y);
+            small.periodic();
+            base.periodic();
 
 
-            drive.intake.setPower(gamepad2.right_trigger);
 
-            if(gamepad2.left_trigger >= 0.75){
 
-            }
+
+//            //drive.smallArm.setPower(gamepad2.right_stick_y/1.35);
+//            drive.smallArm.getPower();
+//            if(Math.abs(gamepad2.right_stick_y) > 0.05){
+//                drive.smallArm.setPower(gamepad2.right_stick_y/1.35);
+//            } else {
+//                drive.smallArm.setPower(getSmallArmFeedForward(getSmallArmRealAngle(smallArmEnc,bigArmEnc)));
+//            }
+//
+//
+//
+//            drive.intake.setPower(gamepad2.right_trigger);
+//
+//            if(gamepad2.left_trigger >= 0.75){
+//
+//            }
 
 
 
