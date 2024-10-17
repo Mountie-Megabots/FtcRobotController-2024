@@ -5,19 +5,24 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 
-public class ArmSystem {
-    ArmSystem base;     // Reference to big arm (used by little arm for FF).
+public class Arm {
+    Arm base;     // Reference to big arm (used by little arm for FF).
     DcMotorEx motor;
     DcMotorEx encoder;
     double startingPose;
 
 
-    public ArmSystem(DcMotorEx motor, DcMotorEx encoder, double startingPose){
-
+    public Arm(DcMotorEx motor, DcMotorEx encoder, double startingPose){
+        this.motor = motor;
+        this.encoder = encoder;
+        this.startingPose = startingPose;
     }
 
-    public ArmSystem(DcMotorEx motor, DcMotorEx encoder, double startingPose, ArmSystem base){
-
+    public Arm(DcMotorEx motor, DcMotorEx encoder, double startingPose, Arm base){
+        this.motor = motor;
+        this.encoder = encoder;
+        this.startingPose = startingPose;
+        this.base = base;
     }
 
     public double getPositionDegrees(){
