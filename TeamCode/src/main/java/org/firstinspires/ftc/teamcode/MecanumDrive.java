@@ -111,7 +111,7 @@ public final class MecanumDrive {
     public final AccelConstraint defaultAccelConstraint =
             new ProfileAccelConstraint(PARAMS.minProfileAccel, PARAMS.maxProfileAccel);
 
-    public final DcMotorEx leftFront, leftBack, rightBack, rightFront;
+    public final DcMotorEx leftFront, leftBack, rightBack, rightFront, rightBigArm, leftBigArm, smallArm, intake;
 
     public final VoltageSensor voltageSensor;
 
@@ -227,16 +227,20 @@ public final class MecanumDrive {
         rightBack = hardwareMap.get(DcMotorEx.class, "backRight");
         rightFront = hardwareMap.get(DcMotorEx.class, "frontRight");
 
-
-
+        leftBigArm = hardwareMap.get(DcMotorEx.class, "leftBigArm");
+        rightBigArm = hardwareMap.get(DcMotorEx.class, "rightBigArm");
+        smallArm = hardwareMap.get(DcMotorEx.class, "smallArmMotor");
+        intake = hardwareMap.get(DcMotorEx.class, "intake");
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-
-
+        leftBigArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBigArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        smallArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //Large Arm
         //down pos = -34 deg -20 tick
@@ -251,7 +255,7 @@ public final class MecanumDrive {
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
         rightBack.setDirection(DcMotorSimple.Direction.FORWARD);
         rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
-
+        rightBigArm.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // TODO: make sure your config has an IMU with this name (can be BNO or BHI)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
