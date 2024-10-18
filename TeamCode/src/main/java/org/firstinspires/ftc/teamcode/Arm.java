@@ -8,14 +8,23 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Arm {
     Arm base;     // Reference to big arm (used by little arm for FF).
     DcMotorEx motor;
+    DcMotorEx motor1;
     DcMotorEx encoder;
-    double startingPose, goal = 0;
     PIDController pid;
+
+    // Fixed values
+    double startingPose;
+    double forwardLimit;
+    double backwardLimit;
+
+    double goal = 0;
     double manual = 0;
 
 
-    public Arm(DcMotorEx motor, DcMotorEx encoder, double startingPose){
+
+    public Arm(DcMotorEx motor, DcMotorEx motor1, DcMotorEx encoder, double startingPose){
         this.motor = motor;
+        this.motor1= motor1;
         this.encoder = encoder;
         this.startingPose = startingPose;
         pid = new PIDController(.1,0,0);
@@ -85,9 +94,7 @@ public class Arm {
         telemetry.addData(caption+" Encoder", encoder.getCurrentPosition());
         telemetry.addData(caption+" Angle", this.getPositionDegrees());
         telemetry.addData(caption+" Power", motor.getPower());
-        telemetry.addData(caption+"FF", getGravityFeedForward());
-
-
+        telemetry.addData(caption+" FF", getGravityFeedForward());
     }
 
     /*
@@ -99,5 +106,27 @@ public class Arm {
 
     public void setManual(double x){
         manual = x;
+    }
+
+    public void setPID(double p, double i, double d){
+        this.pid.setP(p);
+        this.pid.setI(i);
+        this.pid.setD(d);
+    }
+
+    public void setForwardLimit(double limit){
+        this.forwardLimit = limit;
+    }
+
+    public void setBackwardLimit(double limit){
+        this.backwardLimit = limit;
+    }
+
+    private void setMotorPower(double power){
+        motor.setPower(power);
+
+        if(base == null){
+            motor1.setPower(power);
+        }
     }
 }

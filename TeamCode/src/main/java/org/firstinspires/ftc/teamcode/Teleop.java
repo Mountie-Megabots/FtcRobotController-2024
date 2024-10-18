@@ -18,9 +18,8 @@ public class Teleop extends LinearOpMode {
         Pose2d beginPose = new Pose2d(0, 0, 0);
         MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
         PIDController pid = new PIDController(.1, 0, 0);
-        Arm base = new Arm(drive.leftBigArm, drive.leftFront, -37);
-        Arm small = new Arm(drive.smallArm, drive.smallArm, 142);
-
+        Arm bigArm = new Arm(drive.leftBigArm, drive.rightBigArm, drive.leftFront, -37);
+        Arm small = new Arm(drive.smallArm, drive.smallArm, 142, bigArm);
 
         waitForStart();
 
@@ -46,19 +45,8 @@ public class Teleop extends LinearOpMode {
 //            drive.leftBack.setPower(y - x + rx);
 //            drive.rightFront.setPower(y - x - rx);
 //            drive.rightBack.setPower(y + x - rx);
-            int bigArmEnc = drive.leftFront.getCurrentPosition();
-            int smallArmEnc = drive.smallArm.getCurrentPosition();
 
-            base.writeTelemetry(telemetry, "BigArm");
-            small.writeTelemetry(telemetry, "SmallArm");
 
-//            telemetry.addData("Big Arm pos", bigArmEnc);
-//            telemetry.addData("Small Arm pos", smallArmEnc);
-//            telemetry.addData("Rotation", getArmDegrees(bigArmEnc));
-//            telemetry.addData("Motor Power",gamepad2.left_stick_y);
-//            telemetry.addData("Small Arm Rot", getSmallArmDegrees(smallArmEnc));
-//            telemetry.addData("Small Arm Real Angle", getSmallArmRealAngle(smallArmEnc, bigArmEnc));
-//            telemetry.addData("Small Motor Power",drive.smallArm.getPower());
             //Large Arm
             //down pos = -34 deg -20 tick
             // straight up 90 deg 2852 tick
@@ -70,26 +58,30 @@ public class Teleop extends LinearOpMode {
             //home 137 deg 9 tick
             // 0 deg -3100 tick
 
-//            if(Math.abs(gamepad2.left_stick_y) > .05){
-//                drive.leftBigArm.setPower(-gamepad2.left_stick_y);
-//                drive.rightBigArm.setPower(-gamepad2.left_stick_y);
-//            }
-//            else{
-//                drive.leftBigArm.setPower(getArmFeedForward(getArmDegrees(bigArmEnc)));
-//                drive.rightBigArm.setPower(getArmFeedForward(getArmDegrees(bigArmEnc)));
-//            }
+            //Big Arm Controls
+            if(Math.abs(gamepad2.left_stick_y) > 0.05){
+                bigArm.setManual(gamepad2.left_stick_y);
+            }
+            else{
+                bigArm.setManual(0);
+            }
 
             if(gamepad2.left_bumper){
-                base.setTarget(0);
+                bigArm.setTarget(0);
             }
             else if(gamepad2.right_bumper){
-                base.setTarget(50);
+                bigArm.setTarget(50);
             }
 
-            small.setManual(gamepad2.right_stick_y);
-            base.setManual(gamepad2.left_stick_y);
+            if(Math.abs(gamepad2.right_stick_y) > 0.05){
+                small.setManual(gamepad2.right_stick_y);
+            }
+            else{
+                small.setManual(0);
+            }
+
             small.periodic();
-            base.periodic();
+            bigArm.periodic();
 
 
 
