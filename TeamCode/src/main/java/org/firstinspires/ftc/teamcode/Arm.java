@@ -40,9 +40,9 @@ public class Arm {
 
     public double getPositionDegrees(){
         double initialArmAngle = startingPose;
-        if(base != null) {
-            initialArmAngle = base.startingPose;
-        }
+//        if(base != null) {
+//            initialArmAngle = base.startingPose;
+//        }
         return initialArmAngle + encoder.getCurrentPosition()*0.04453015;
     }
 
@@ -74,17 +74,23 @@ public class Arm {
      */
     public void periodic(){
         double motorSpeed = 0;
-        if(Math.abs(manual) > .05){
+        double FF = this.getGravityFeedForward();
+        if(Math.abs(manual) > .05 && Math.abs(manual) > .75){
+            motorSpeed = manual+FF;
+        }
+        else if(Math.abs(manual) >= .75){
             motorSpeed = manual;
         }
         else{
-            double FF = this.getGravityFeedForward();
-
             double pidValue = pid.calculate(goal, this.getPositionDegrees());
-            motorSpeed = pidValue;
+            motorSpeed = pidValue + FF;
         }
 
         motor.setPower(motorSpeed);
+
+        if(motor1 != null){
+            motor1.setPower(motorSpeed);
+        }
     }
 
     /*
@@ -95,6 +101,10 @@ public class Arm {
         telemetry.addData(caption+" Angle", this.getPositionDegrees());
         telemetry.addData(caption+" Power", motor.getPower());
         telemetry.addData(caption+" FF", getGravityFeedForward());
+
+        if(base != null){
+            telemetry.addData(caption+" Real Angle", base.getPositionDegrees()+this.getPositionDegrees());
+        }
     }
 
     /*
@@ -128,5 +138,9 @@ public class Arm {
         if(base == null){
             motor1.setPower(power);
         }
+    }
+
+    public void setTargetToCurrent(){
+        setTarget(this.getPositionDegrees());
     }
 }

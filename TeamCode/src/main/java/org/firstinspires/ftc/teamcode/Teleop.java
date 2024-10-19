@@ -17,34 +17,38 @@ public class Teleop extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Pose2d beginPose = new Pose2d(0, 0, 0);
         MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
-        PIDController pid = new PIDController(.1, 0, 0);
         Arm bigArm = new Arm(drive.leftBigArm, drive.rightBigArm, drive.leftFront, -37);
-        Arm small = new Arm(drive.smallArm, drive.smallArm, 142, bigArm);
-
-        waitForStart();
+        Arm smallArm = new Arm(drive.smallArm, drive.smallArm, 142, bigArm);
 
         drive.leftBigArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         drive.rightBigArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         drive.smallArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        bigArm.setPID(.01, 0, 0);
+        smallArm.setPID(.01, 0, 0);
+
+        waitForStart();
 
         drive.leftBigArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         drive.rightBigArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         drive.smallArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
+        bigArm.setTarget(-37);
+        smallArm.setTarget(142);
 
 
 
         while(opModeIsActive()){
 
-//            double y = -gamepad1.left_stick_y; // Remember, Y stick is reversed!
-//            double x = gamepad1.left_stick_x;
-//            double rx = gamepad1.right_stick_x;
-//
-//            drive.leftFront.setPower(y + x + rx);
-//            drive.leftBack.setPower(y - x + rx);
-//            drive.rightFront.setPower(y - x - rx);
-//            drive.rightBack.setPower(y + x - rx);
+            double y = -gamepad1.left_stick_y; // Remember, Y stick is reversed!
+            double x = gamepad1.left_stick_x;
+            double rx = gamepad1.right_stick_x;
+
+            drive.leftFront.setPower(y + x + rx);
+            drive.leftBack.setPower(y - x + rx);
+            drive.rightFront.setPower(y - x - rx);
+            drive.rightBack.setPower(y + x - rx);
 
 
             //Large Arm
@@ -60,48 +64,67 @@ public class Teleop extends LinearOpMode {
 
             //Big Arm Controls
             if(Math.abs(gamepad2.left_stick_y) > 0.05){
-                bigArm.setManual(gamepad2.left_stick_y);
+                bigArm.setManual(-gamepad2.left_stick_y);
             }
             else{
                 bigArm.setManual(0);
             }
 
             if(gamepad2.left_bumper){
-                bigArm.setTarget(0);
+                drive.intake.setPower(-1);
             }
             else if(gamepad2.right_bumper){
-                bigArm.setTarget(50);
+                drive.intake.setPower(1);
+            }
+            else{
+                drive.intake.setPower(0);
+            }
+
+            if(gamepad2.right_trigger > .1){
+                smallArm.setTargetToCurrent();
+                bigArm.setTargetToCurrent();
+            }
+
+            // Home Position
+            if(gamepad2.a){
+                smallArm.setTarget(141.9);
+                bigArm.setTarget(-38);
+            }
+            // Intake Position
+            else if(gamepad2.x){
+                smallArm.setTarget(34);
+                bigArm.setTarget(-37);
+
+            }
+            // Specimen Wall
+            else if(gamepad2.dpad_up){
+                smallArm.setTarget(109.1);
+                bigArm.setTarget(-37);
+            }
+            // Basket Score
+            else if(gamepad2.b){
+            smallArm.setTarget(75.6);
+            bigArm.setTarget(94.2);
+            }
+            // Specimen Score
+            else if(gamepad2.dpad_down){
+                smallArm.setTarget(33);
+                bigArm.setTarget(50.5);
             }
 
             if(Math.abs(gamepad2.right_stick_y) > 0.05){
-                small.setManual(gamepad2.right_stick_y);
+                smallArm.setManual(-gamepad2.right_stick_y/2.5);
             }
             else{
-                small.setManual(0);
+                smallArm.setManual(0);
             }
 
-            small.periodic();
+            smallArm.periodic();
             bigArm.periodic();
 
+            smallArm.writeTelemetry(telemetry, "Small Arm");
+            bigArm.writeTelemetry(telemetry, "Big Arm");
 
-
-
-
-//            //drive.smallArm.setPower(gamepad2.right_stick_y/1.35);
-//            drive.smallArm.getPower();
-//            if(Math.abs(gamepad2.right_stick_y) > 0.05){
-//                drive.smallArm.setPower(gamepad2.right_stick_y/1.35);
-//            } else {
-//                drive.smallArm.setPower(getSmallArmFeedForward(getSmallArmRealAngle(smallArmEnc,bigArmEnc)));
-//            }
-//
-//
-//
-//            drive.intake.setPower(gamepad2.right_trigger);
-//
-//            if(gamepad2.left_trigger >= 0.75){
-//
-//            }
 
 
 
