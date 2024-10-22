@@ -27,6 +27,13 @@ public class Teleop extends LinearOpMode {
         bigArm.setPID(.01, 0, 0);
         smallArm.setPID(.01, 0, 0);
 
+        // Set limits
+        bigArm.setForwardLimit(126.4);
+        bigArm.setBackwardLimit(-37);
+
+        smallArm.setForwardLimit(141);
+        smallArm.setBackwardLimit(-117.6);
+
         waitForStart();
 
         drive.leftBigArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -113,7 +120,7 @@ public class Teleop extends LinearOpMode {
             }
 
             if(Math.abs(gamepad2.right_stick_y) > 0.05){
-                smallArm.setManual(-gamepad2.right_stick_y/2.5);
+                smallArm.setManual(-gamepad2.right_stick_y);
             }
             else{
                 smallArm.setManual(0);

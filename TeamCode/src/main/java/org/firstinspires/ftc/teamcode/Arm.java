@@ -16,6 +16,7 @@ public class Arm {
     double startingPose;
     double forwardLimit;
     double backwardLimit;
+    double limitBias = 1;
 
     double goal = 0;
     double manual = 0;
@@ -86,6 +87,16 @@ public class Arm {
             motorSpeed = pidValue + FF;
         }
 
+
+        // Enforce limits
+        if( motorSpeed > 0 && this.getPositionDegrees() > forwardLimit*limitBias){
+            motorSpeed = FF;
+        }
+        else if( motorSpeed < 0 && this.getPositionDegrees() < backwardLimit*limitBias){
+            motorSpeed = FF;
+        }
+
+
         motor.setPower(motorSpeed);
 
         if(motor1 != null){
@@ -130,6 +141,10 @@ public class Arm {
 
     public void setBackwardLimit(double limit){
         this.backwardLimit = limit;
+    }
+
+    public void setLimitBias(double limit){
+        this.limitBias = limit;
     }
 
     private void setMotorPower(double power){
