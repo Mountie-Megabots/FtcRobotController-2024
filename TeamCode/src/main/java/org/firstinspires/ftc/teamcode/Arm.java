@@ -96,8 +96,12 @@ public class Arm {
             motorSpeed = FF;
         }
 
-
-        motor.setPower(motorSpeed);
+        if(base == null){
+            motor.setPower(motorSpeed);
+        }
+        else{
+            motor.setPower(motorSpeed/2);
+        }
 
         if(motor1 != null){
             motor1.setPower(motorSpeed);

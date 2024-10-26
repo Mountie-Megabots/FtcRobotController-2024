@@ -103,10 +103,7 @@ public class Teleop extends LinearOpMode {
                 bigArm.setTarget(-37);
 
             }
-            // Specimen Wall
-            else if(gamepad2.dpad_up){
-                smallArm.setTarget(109.1);
-                bigArm.setTarget(-37);
+
             }
             // Basket Score
             else if(gamepad2.b){
