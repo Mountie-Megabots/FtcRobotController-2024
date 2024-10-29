@@ -14,9 +14,9 @@ public class MeepMeepTesting {
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .build();
-
-        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(50, -62, 1.58))
-                        .lineToY(40).turn(1).build());
+//-62
+        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(0, -32, 1.58))
+                        .lineToX(45).build());
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_JUICE_DARK)
                 .setDarkMode(true)

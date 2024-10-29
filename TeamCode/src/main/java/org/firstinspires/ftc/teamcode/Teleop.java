@@ -46,7 +46,7 @@ public class Teleop extends LinearOpMode {
 
 
 
-        while(opModeIsActive()){
+        while(opModeIsActive()) {
 
             double y = -gamepad1.left_stick_y; // Remember, Y stick is reversed!
             double x = gamepad1.left_stick_x;
@@ -64,45 +64,39 @@ public class Teleop extends LinearOpMode {
             // 0.043175 degrees per tick
 
 
-
             //Small Arm;
             //home 137 deg 9 tick
             // 0 deg -3100 tick
 
             //Big Arm Controls
-            if(Math.abs(gamepad2.left_stick_y) > 0.05){
+            if (Math.abs(gamepad2.left_stick_y) > 0.05) {
                 bigArm.setManual(-gamepad2.left_stick_y);
-            }
-            else{
+            } else {
                 bigArm.setManual(0);
             }
 
-            if(gamepad2.left_bumper){
+            if (gamepad2.left_bumper) {
                 drive.intake.setPower(-1);
-            }
-            else if(gamepad2.right_bumper){
+            } else if (gamepad2.right_bumper) {
                 drive.intake.setPower(1);
-            }
-            else{
+            } else {
                 drive.intake.setPower(0);
             }
 
-            if(gamepad2.right_trigger > .1){
+            if (gamepad2.right_trigger > .1) {
                 smallArm.setTargetToCurrent();
                 bigArm.setTargetToCurrent();
             }
 
             // Home Position
-            if(gamepad2.a){
+            if (gamepad2.a) {
                 smallArm.setTarget(141.9);
                 bigArm.setTarget(-38);
             }
             // Intake Position
-            else if(gamepad2.x){
+            else if (gamepad2.x) {
                 smallArm.setTarget(34);
                 bigArm.setTarget(-37);
-
-            }
 
             }
             // Basket Score
