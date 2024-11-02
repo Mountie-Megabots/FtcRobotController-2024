@@ -50,7 +50,7 @@ public class Arm {
 
     private double getGravityFeedForward(){
         double angle = getPositionDegrees();
-        double initial = .25;
+        double initial = .20;
 
         // If this Arm is connected to another arm segment
         if(base != null){
@@ -116,6 +116,7 @@ public class Arm {
         telemetry.addData(caption+" Angle", this.getPositionDegrees());
         telemetry.addData(caption+" Power", motor.getPower());
         telemetry.addData(caption+" FF", getGravityFeedForward());
+        telemetry.addData(caption +" Goal", this.goal);
 
         if(base != null){
             telemetry.addData(caption+" Real Angle", base.getPositionDegrees()+this.getPositionDegrees());
@@ -137,6 +138,10 @@ public class Arm {
         this.pid.setP(p);
         this.pid.setI(i);
         this.pid.setD(d);
+    }
+
+    public void setIZone(double iz){
+        this.pid.setIZone(iz);
     }
 
     public void setForwardLimit(double limit){

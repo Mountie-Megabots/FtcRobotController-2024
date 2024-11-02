@@ -7,6 +7,8 @@ public class PIDController {
     private double integral = 0;
     private long lastTime = 0;
     private double lastGoal = 0;
+    private double IZone = 0;
+
 
     PIDController(double P, double I, double D){
         this.P = P;
@@ -25,8 +27,15 @@ public class PIDController {
             this.reset(goal, error);
         }
 
-        integral += error/elaspsedTime;
+
         derivative = (error-prevError)/elaspsedTime;
+        if(error < IZone){
+            integral += error/elaspsedTime;
+        }
+        else{
+            integral = 0;
+        }
+
         output = P * error + I * integral + D * derivative;
 
         prevError = error;
@@ -66,5 +75,13 @@ public class PIDController {
 
     double getD(){
         return this.D;
+    }
+
+    void setIZone(double IZ){
+        this.IZone = IZ;
+    }
+
+    double getIZone(){
+        return this.IZone;
     }
 }

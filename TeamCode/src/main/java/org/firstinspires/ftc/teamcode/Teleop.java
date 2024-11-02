@@ -24,7 +24,8 @@ public class Teleop extends LinearOpMode {
         drive.rightBigArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         drive.smallArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        bigArm.setPID(.01, 0, 0);
+        bigArm.setPID(.03, .1, 0);
+        bigArm.setIZone(6);
         smallArm.setPID(.01, 0, 0);
 
         // Set limits
@@ -33,6 +34,8 @@ public class Teleop extends LinearOpMode {
 
         smallArm.setForwardLimit(141);
         smallArm.setBackwardLimit(-117.6);
+
+
 
         waitForStart();
 
@@ -80,11 +83,11 @@ public class Teleop extends LinearOpMode {
             if(gamepad2.left_bumper){
                 drive.intake.setPower(-1);
             }
-            else if(gamepad2.right_bumper){
-                drive.intake.setPower(1);
-            }
+            //else if(gamepad2.right_bumper){
+            //    drive.intake.setPower(1);
+            //}
             else{
-                drive.intake.setPower(0);
+                drive.intake.setPower(gamepad2.left_trigger);
             }
 
             if(gamepad2.right_trigger > .1){
@@ -99,10 +102,8 @@ public class Teleop extends LinearOpMode {
             }
             // Intake Position
             else if(gamepad2.x){
-                smallArm.setTarget(34);
+                smallArm.setTarget(28);
                 bigArm.setTarget(-37);
-
-            }
 
             }
             // Basket Score
