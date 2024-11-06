@@ -81,15 +81,19 @@ public class Teleop extends LinearOpMode {
             if (gamepad2.left_bumper) {
                 drive.intake.setPower(-1);
             }
+
+
             //else if(gamepad2.right_bumper){
             //    drive.intake.setPower(1);
             //}
-            else{
+            else if(gamepad2.left_trigger > 0.25) {
                 drive.intake.setPower(gamepad2.left_trigger);
-            } else if (gamepad2.right_bumper) {
-                drive.intake.setPower(1);
             } else {
                 drive.intake.setPower(0);
+            }
+
+            if(gamepad2.y){
+                bigArm.climbMode = true;
             }
 
             if (gamepad2.right_trigger > .1) {
@@ -103,8 +107,6 @@ public class Teleop extends LinearOpMode {
                 bigArm.setTarget(-38);
             }
             // Intake Position
-            else if(gamepad2.x){
-                smallArm.setTarget(28);
             else if (gamepad2.x) {
                 smallArm.setTarget(34);
                 bigArm.setTarget(-37);

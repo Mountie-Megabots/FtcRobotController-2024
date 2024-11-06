@@ -17,6 +17,7 @@ public class Arm {
     double forwardLimit;
     double backwardLimit;
     double limitBias = 1;
+    boolean climbMode = false;
 
     double goal = 0;
     double manual = 0;
@@ -73,7 +74,9 @@ public class Arm {
     /*
         This function should be called in the robot main loop and should set motor speeds.
      */
+
     public void periodic(){
+
         double motorSpeed = 0;
         double FF = this.getGravityFeedForward();
         if(Math.abs(manual) > .05 && Math.abs(manual) > .75){
@@ -87,13 +90,15 @@ public class Arm {
             motorSpeed = pidValue + FF;
         }
 
-
         // Enforce limits
-        if( motorSpeed > 0 && this.getPositionDegrees() > forwardLimit*limitBias){
-            motorSpeed = FF;
-        }
-        else if( motorSpeed < 0 && this.getPositionDegrees() < backwardLimit*limitBias){
-            motorSpeed = FF;
+        if(!climbMode){
+            if (motorSpeed > 0 && this.getPositionDegrees() > forwardLimit * limitBias) {
+                motorSpeed = FF;
+            } else if (motorSpeed < 0 && this.getPositionDegrees() < backwardLimit * limitBias) {
+                motorSpeed = FF;
+            }
+        } else {
+            motorSpeed = -1;
         }
 
         if(base == null){
