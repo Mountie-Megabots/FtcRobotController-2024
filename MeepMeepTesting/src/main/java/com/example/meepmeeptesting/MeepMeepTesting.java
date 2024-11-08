@@ -18,7 +18,7 @@ public class MeepMeepTesting {
                 .build();
 //-62
         myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(0, -62, Math.PI/2))
-                        .splineTo(pos, -3).turn(Math.toRadians(-143.6)).build());
+                .splineTo(pos, Math.PI/-1.4).turn(Math.toRadians(-180)).build());
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_JUICE_DARK)
                 .setDarkMode(true)

@@ -68,6 +68,8 @@ public final class MecanumDrive {
         //Redo all tunes except inpertick and put values HERE
 
         // drive model parameters
+        //0.0029367343514012
+        //0.0058907363420428
         public double inPerTick = 0.0029367343514012;
         public double lateralInPerTick = 0.002286623268736362;
         public double trackWidthTicks = 3740.9596119293706;

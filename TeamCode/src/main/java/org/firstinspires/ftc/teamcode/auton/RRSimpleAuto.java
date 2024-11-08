@@ -17,20 +17,21 @@ import org.firstinspires.ftc.teamcode.Arm;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.tuning.TuningOpModes;
 @Autonomous(name = "TestAuto", group = "Autonomous")
-public class SimpleAuto extends LinearOpMode {
+public class RRSimpleAuto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        Pose2d beginPose = new Pose2d(0, 0, 0);
+        Pose2d beginPose = new Pose2d(0, -62, Math.PI /2);
         if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
             MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
             Arm bigArm = new Arm(drive.leftBigArm, drive.rightBigArm, drive.leftFront, -37);
             Arm smallArm = new Arm(drive.smallArm, drive.smallArm, 142, bigArm);
             Vector2d pos = new Vector2d(-52,-52);
 
+
             waitForStart();
 
             TrajectoryActionBuilder tab1 = drive.actionBuilder(beginPose)
-                    .splineTo(pos, -3).turn(Math.toRadians(-143.6));
+                    .splineTo(pos, Math.PI/-1.4).turn(Math.toRadians(-180));
 
             Actions.runBlocking(new SequentialAction(
                     tab1.build(),
