@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.tuning.TuningOpModes;
 @Autonomous(name = "TestAuto", group = "Autonomous")
 public class RRSimpleAuto extends LinearOpMode {
     @Override
+
     public void runOpMode() throws InterruptedException {
         Pose2d beginPose = new Pose2d(0, -62, Math.PI /2);
         if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
@@ -29,29 +30,62 @@ public class RRSimpleAuto extends LinearOpMode {
             Arm bigArm = new Arm(drive.leftBigArm, drive.rightBigArm, drive.leftFront, -37);
             Arm smallArm = new Arm(drive.smallArm, drive.smallArm, 142, bigArm);
             Vector2d pos = new Vector2d(-52,-52);
+            Pose2d basketScore = new Pose2d(-52,-50, Math.PI/4);
+            Pose2d pos2 = new Pose2d(-34, -20, Math.PI/-6);
+            Vector2d humanPlayerPark = new Vector2d(60,-60);
 
 
             waitForStart();
 
             TrajectoryActionBuilder tab1 = drive.actionBuilder(beginPose)
-                    .splineTo(pos, Math.PI/-1.4).turn(Math.toRadians(-180));
+                    .splineToLinearHeading(basketScore, Math.PI);
 
             Actions.runBlocking(
                 new ParallelAction(
-                    new SequentialAction(
-                            tab1.build(),
-                            autoComm.lowBasket(),
-                            autoComm.smallArmTarget(1),
-                            new Action() {
-                                @Override
-                                public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                                drive.intake.setPower(-1);
-                                return false;
+                        new SequentialAction(
+                                autoComm.initializeArm(),
+                                tab1.build(),
+                                new Action() {
+                                    @Override
+                                    public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                                        smallArm.setTarget(75.6);
+                                        bigArm.setTarget(125);
+                                        telemetry.addData("Arm", "targets set");
+                                        return false;
+                                    }
+                                },
+                                 new Action() {
+                                    @Override
+                                    public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                                        bigArm.periodic();
+                                        smallArm.periodic();
+                                        telemetry.addData("Periodic", "loop finished");
+                                        return true;
+
+                                    }
+                                },
+                                new Action() {
+                                    @Override
+                                    public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                                        bigArm.writeTelemetry(telemetry, "bigArm");
+                                        smallArm.writeTelemetry(telemetry, "smallArm");
+                                        telemetry.update();
+                                        return false;
+                                    }
+                                },
+
+                                autoComm.setIntakePower(-1)
+                                //Tune and finish first part before continuing
+                        ),
+                        new Action() {
+                            @Override
+                            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+//                                bigArm.writeTelemetry(telemetry, "BigArm");
+//                                smallArm.writeTelemetry(telemetry, "SmallArm");
+//                                telemetry.update();
+                                return true;
+                            }
                         }
-                    },
-                    new SleepAction(5)
-                    //Tune and finish first part before continuing
-                    )
                 )
             );
         }

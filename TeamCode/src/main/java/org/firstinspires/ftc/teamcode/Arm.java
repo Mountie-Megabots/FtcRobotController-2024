@@ -113,6 +113,25 @@ public class Arm {
         }
     }
 
+    public void autoPeriodic(){
+        double motorSpeed = 0;
+        double FF = this.getGravityFeedForward();
+        double pidValue = pid.calculate(this.goal, this.getPositionDegrees());
+        motorSpeed = pidValue + FF;
+
+        if(base == null){
+            motor.setPower(motorSpeed);
+        }
+        else{
+            motor.setPower(motorSpeed/2);
+        }
+
+        if(motor1 != null){
+            motor1.setPower(motorSpeed);
+        }
+
+    }
+
     /*
         This function should be called by the main robot program to pass it's data to Telemetry.
      */
@@ -133,6 +152,10 @@ public class Arm {
      */
     public void setTarget(double target){
         goal = target;
+    }
+
+    public double getTarget(){
+        return goal;
     }
 
     public void setManual(double x){

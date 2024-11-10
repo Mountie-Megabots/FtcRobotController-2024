@@ -8,9 +8,10 @@ import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class AutonCommands {
+public class AutonCommands{
     Arm smallArm, bigArm;
     MecanumDrive drive;
 
@@ -20,12 +21,58 @@ public class AutonCommands {
          smallArm = new Arm(drive.smallArm, drive.smallArm, 142, bigArm);
     }
 
+    public Action initializeArm(){
+        return new Action() {
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                drive.leftBigArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                drive.rightBigArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                drive.smallArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+                bigArm.setPID(.03, .1, 0);
+                bigArm.setIZone(6);
+                smallArm.setPID(.01, 0, 0);
+
+                // Set limits
+//                bigArm.setForwardLimit(126.4);
+//                bigArm.setBackwardLimit(-37);
+//
+//                smallArm.setForwardLimit(141);
+//                smallArm.setBackwardLimit(-117.6);
+
+                drive.leftBigArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                drive.rightBigArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                drive.smallArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
+                bigArm.setTarget(-37);
+                smallArm.setTarget(142);
+                telemetryPacket.addLine("Bot Initialized. BigArm goal = " + bigArm.goal + " SmallArm goal = " + smallArm.goal);
+                return false;
+            }
+        };
+    }
+
+    public Action runArmPeriodic(){
+        return new Action() {
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                bigArm.periodic();
+                smallArm.periodic();
+                telemetryPacket.addLine("Periodic running");
+                return Math.abs(smallArm.goal - smallArm.getPositionDegrees()) > 5
+                        || Math.abs(bigArm.goal - bigArm.getPositionDegrees()) > 5;
+            }
+        };
+    }
+
     public Action bigArmTarget(double target){
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                bigArm.setTarget(target);
-                return Math.abs(target - bigArm.getPositionDegrees()) > 5;
+                bigArm.goal = target;
+                telemetryPacket.addLine("BigArm new goal = " + bigArm.goal);
+                return false;
             }
         };
     }
@@ -34,8 +81,9 @@ public class AutonCommands {
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                smallArm.setTarget(target);
-                return Math.abs(target - smallArm.getPositionDegrees()) > 5;
+                smallArm.goal = target;
+                telemetryPacket.addLine("SmallArm new goal = " + smallArm.goal);
+                return false;
             }
         };
     }
@@ -55,13 +103,12 @@ public class AutonCommands {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
                 new SequentialAction(
-                    new ParallelAction(
                         smallArmTarget(75.6),
-                        bigArmTarget(94.2)
-                    ),
+                        bigArmTarget(94.2),
+                        runArmPeriodic(),
                         setIntakePower(-1)
-                    );
-                return Math.abs(smallArm.getPositionDegrees()) > 5 || Math.abs(bigArm.getPositionDegrees()) > 5;
+                );
+                return false;
             }
         };
     }
@@ -90,9 +137,10 @@ public class AutonCommands {
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
                 new ParallelAction(
                         smallArmTarget(141.9),
-                        bigArmTarget(-38)
+                        bigArmTarget(-38),
+                        runArmPeriodic()
                 );
-                return Math.abs(smallArm.getPositionDegrees()) > 5 || Math.abs(bigArm.getPositionDegrees()) > 5;
+                return false;
             }
         };
     }
