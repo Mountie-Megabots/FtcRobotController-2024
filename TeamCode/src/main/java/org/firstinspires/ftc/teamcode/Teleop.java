@@ -92,8 +92,10 @@ public class Teleop extends LinearOpMode {
                 drive.intake.setPower(0);
             }
 
-            if(gamepad2.y){
+            if(gamepad2.y && !bigArm.climbMode){
                 bigArm.climbMode = true;
+            } else if(gamepad2.y && bigArm.climbMode){
+                bigArm.climbMode = false;
             }
 
             if (gamepad2.right_trigger > .1) {
