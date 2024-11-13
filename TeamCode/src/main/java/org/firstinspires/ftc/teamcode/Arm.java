@@ -132,6 +132,10 @@ public class Arm {
 
     }
 
+    public boolean atGoal(){
+        return Math.abs(this.goal - this.getPositionDegrees()) < 5;
+    }
+
     /*
         This function should be called by the main robot program to pass it's data to Telemetry.
      */

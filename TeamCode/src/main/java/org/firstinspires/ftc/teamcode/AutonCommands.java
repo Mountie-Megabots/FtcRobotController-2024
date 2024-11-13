@@ -11,6 +11,8 @@ import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class AutonCommands{
     Arm smallArm, bigArm;
     MecanumDrive drive;
@@ -21,7 +23,7 @@ public class AutonCommands{
          smallArm = new Arm(drive.smallArm, drive.smallArm, 142, bigArm);
     }
 
-    public Action initializeArm(){
+    public Action initializeArm(Telemetry telemetry){
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
@@ -47,42 +49,61 @@ public class AutonCommands{
 
                 bigArm.setTarget(-37);
                 smallArm.setTarget(142);
-                telemetryPacket.addLine("Bot Initialized. BigArm goal = " + bigArm.goal + " SmallArm goal = " + smallArm.goal);
+                telemetry.addLine("Bot Initialized. BigArm goal = " + bigArm.goal + " SmallArm goal = " + smallArm.goal);
                 return false;
             }
         };
     }
 
-    public Action runArmPeriodic(){
+    public Action runArmPeriodic(Telemetry telemetry){
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
                 bigArm.periodic();
                 smallArm.periodic();
-                telemetryPacket.addLine("Periodic running");
-                return Math.abs(smallArm.goal - smallArm.getPositionDegrees()) > 5
-                        || Math.abs(bigArm.goal - bigArm.getPositionDegrees()) > 5;
+                telemetry.addLine("Periodic has ran");
+                telemetry.update();
+                return true;
             }
         };
     }
 
-    public Action bigArmTarget(double target){
+    public Action runArmToPosition(Telemetry telemetry, double smallArmGoal, double bigArmGoal){
+        return new Action() {
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                smallArm.setTarget(smallArmGoal);
+                bigArm.setTarget(bigArmGoal);
+
+                bigArm.periodic();
+                smallArm.periodic();
+                bigArm.writeTelemetry(telemetry, "bigArm");
+                smallArm.writeTelemetry(telemetry,"smallArm");
+                telemetry.update();
+
+                return !smallArm.atGoal() || !bigArm.atGoal();
+            }
+        };
+    }
+
+    public Action bigArmTarget(double target, Telemetry telemetry){
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                bigArm.goal = target;
-                telemetryPacket.addLine("BigArm new goal = " + bigArm.goal);
+                bigArm.setTarget(target);
+                telemetry.addLine("BigArm new goal = " + bigArm.goal);
                 return false;
             }
         };
     }
 
-    public Action smallArmTarget(double target){
+    public Action smallArmTarget(double target, Telemetry telemetry){
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                smallArm.goal = target;
-                telemetryPacket.addLine("SmallArm new goal = " + smallArm.goal);
+                smallArm.setTarget(target);
+                telemetry.addLine("SmallArm new goal = " + smallArm.goal);
                 return false;
             }
         };
@@ -98,14 +119,13 @@ public class AutonCommands{
         };
     }
 
-    public Action lowBasket(){
+    public Action lowBasket(Telemetry telemetry){
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
                 new SequentialAction(
-                        smallArmTarget(75.6),
-                        bigArmTarget(94.2),
-                        runArmPeriodic(),
+                        smallArmTarget(75.6, telemetry),
+                        bigArmTarget(94.2, telemetry),
                         setIntakePower(-1)
                 );
                 return false;
@@ -113,7 +133,7 @@ public class AutonCommands{
         };
     }
 
-    public Action intakeSample(){
+    /*public Action intakeSample(){
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
@@ -155,5 +175,7 @@ public class AutonCommands{
             }
         };
     }
+
+     */
 
 }

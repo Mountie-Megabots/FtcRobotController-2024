@@ -36,59 +36,61 @@ public class RRSimpleAuto extends LinearOpMode {
 
 
             waitForStart();
+            //telemetry.setAutoClear(false);
 
             TrajectoryActionBuilder tab1 = drive.actionBuilder(beginPose)
                     .splineToLinearHeading(basketScore, Math.PI);
 
             Actions.runBlocking(
+                    new SequentialAction(
+                            autoComm.initializeArm(telemetry),
+                            tab1.build(),
+                            autoComm.setIntakePower(-1),
+                            autoComm.runArmToPosition(telemetry, 75.6, 94.2)
+                )
+            );
+
+            /*Actions.runBlocking(
                 new ParallelAction(
                         new SequentialAction(
-                                autoComm.initializeArm(),
+                                autoComm.initializeArm(telemetry),
                                 tab1.build(),
-                                new Action() {
-                                    @Override
-                                    public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                                        smallArm.setTarget(75.6);
-                                        bigArm.setTarget(125);
-                                        telemetry.addData("Arm", "targets set");
-                                        return false;
-                                    }
-                                },
                                  new Action() {
                                     @Override
                                     public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                                        bigArm.periodic();
-                                        smallArm.periodic();
-                                        telemetry.addData("Periodic", "loop finished");
-                                        return true;
-
-                                    }
-                                },
-                                new Action() {
-                                    @Override
-                                    public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                                        bigArm.writeTelemetry(telemetry, "bigArm");
-                                        smallArm.writeTelemetry(telemetry, "smallArm");
-                                        telemetry.update();
+                                                smallArm.setTarget(75.6);
+                                                bigArm.setTarget(94.2);
                                         return false;
                                     }
                                 },
-
-                                autoComm.setIntakePower(-1)
+                                autoComm.setIntakePower(-1),
+                                telemetryPacket -> {
+                                    bigArm.writeTelemetry(telemetry, "BigArm");
+                                    smallArm.writeTelemetry(telemetry, "SmallArm");
+                                    telemetry.update();
+                                    return true;
+                                }
                                 //Tune and finish first part before continuing
                         ),
-                        new Action() {
-                            @Override
-                            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-//                                bigArm.writeTelemetry(telemetry, "BigArm");
-//                                smallArm.writeTelemetry(telemetry, "SmallArm");
-//                                telemetry.update();
-                                return true;
-                            }
-                        }
+                        autoComm.runArmPeriodic(telemetry)
                 )
-            );
+            );*/
+
+           /* Actions.runBlocking(tab1.build());
+
+            // Set Arm ard run until goal reached.
+            smallArm.setTarget(75.6);
+            bigArm.setTarget(94.2);
+
+            while(!smallArm.atGoal() || !bigArm.atGoal()){
+                bigArm.periodic();
+                smallArm.periodic();
+            }*/
+
+
         }
+
+
 
 
     }
