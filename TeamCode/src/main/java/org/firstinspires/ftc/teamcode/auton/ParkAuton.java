@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.Arm;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 @Autonomous(name = "ParkAuton", group = "Autonomous")
@@ -14,6 +15,13 @@ public class ParkAuton extends LinearOpMode {
     public void runOpMode() throws InterruptedException{
         Pose2d beginPose = new Pose2d(0, -62, Math.PI /2);
         MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
+        Arm bigArm = new Arm(drive.leftBigArm, drive.rightBigArm, drive.leftFront, -37);
+        Arm smallArm = new Arm(drive.smallArm, drive.smallArm, 127, bigArm);
+
+
+        init();
+
+        smallArm.setManual(-1);
 
         waitForStart();
 
