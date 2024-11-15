@@ -76,13 +76,16 @@ public class AutonCommands{
                 smallArm.setTarget(smallArmGoal);
                 bigArm.setTarget(bigArmGoal);
 
-                bigArm.periodic();
-                smallArm.periodic();
-                bigArm.writeTelemetry(telemetry, "bigArm");
-                smallArm.writeTelemetry(telemetry,"smallArm");
-                telemetry.update();
+                while(!smallArm.atGoal() || !bigArm.atGoal()){
+                    bigArm.periodic();
+                    smallArm.periodic();
+                    bigArm.writeTelemetry(telemetry, "bigArm");
+                    smallArm.writeTelemetry(telemetry,"smallArm");
+                    telemetry.update();
+                }
 
-                return !smallArm.atGoal() || !bigArm.atGoal();
+
+                return false;
             }
         };
     }
@@ -131,6 +134,12 @@ public class AutonCommands{
                 return false;
             }
         };
+    }
+
+    public void lowerBasket(Telemetry telemetry){
+        smallArmTarget(75.6, telemetry);
+        bigArmTarget(94.2, telemetry);
+        setIntakePower(-1);
     }
 
     /*public Action intakeSample(){

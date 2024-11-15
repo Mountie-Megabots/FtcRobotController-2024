@@ -13,6 +13,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Arm;
 import org.firstinspires.ftc.teamcode.AutonCommands;
@@ -34,16 +35,37 @@ public class RRSimpleAuto extends LinearOpMode {
             Pose2d pos2 = new Pose2d(-34, -20, Math.PI/-6);
             Vector2d humanPlayerPark = new Vector2d(60,-60);
 
+            drive.leftBigArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            drive.rightBigArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            drive.smallArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+            bigArm.setPID(.03, .1, 0);
+            bigArm.setIZone(6);
+            smallArm.setPID(.01, 0, 0);
+
+            // Set limits
+            bigArm.setForwardLimit(126.4);
+            bigArm.setBackwardLimit(-37);
+
+            smallArm.setForwardLimit(141);
+            smallArm.setBackwardLimit(-117.6);
 
             waitForStart();
             //telemetry.setAutoClear(false);
+            drive.leftBigArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            drive.rightBigArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            drive.smallArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
 
             TrajectoryActionBuilder tab1 = drive.actionBuilder(beginPose)
                     .splineToLinearHeading(basketScore, Math.PI);
 
+            smallArm.setManual(0);
+            bigArm.setManual(0);
+
             Actions.runBlocking(
                     new SequentialAction(
-                            autoComm.initializeArm(telemetry),
+                            //autoComm.initializeArm(telemetry),
                             tab1.build(),
                             autoComm.setIntakePower(-1),
                             autoComm.runArmToPosition(telemetry, 75.6, 94.2)
