@@ -26,8 +26,10 @@ public class MeepMeepTesting {
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .build();
 //-62 mid start
-        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(0, -62, Math.PI/2))
-                .splineToLinearHeading(basketScore, Math.PI).splineToLinearHeading(pos2, -Math.PI).build());
+        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-33, -62, Math.PI/2))
+                .splineToLinearHeading(basketScore, Math.PI).turnTo(Math.PI/1.3)
+                .strafeTo(new Vector2d(-28.5, -37)).strafeTo(new Vector2d(-41, -31)).build());
+
         anotherBot.runAction(anotherBot.getDrive().actionBuilder(new Pose2d(0, -62, Math.PI/2))
                 .lineToY(-34).lineToY(-37).strafeTo(humanPlayerPark).build());
         andAnotherBot.runAction(andAnotherBot.getDrive().actionBuilder(new Pose2d(0,-62, Math.PI/2))

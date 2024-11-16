@@ -5,8 +5,10 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -24,7 +26,7 @@ public class TeleopAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Pose2d beginPose = new Pose2d(0, -62, Math.PI /2);
+        Pose2d beginPose = new Pose2d(-33, -62, Math.PI /2);
         MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
         Arm bigArm = new Arm(drive.leftBigArm, drive.rightBigArm, drive.leftFront, -37);
         Arm smallArm = new Arm(drive.smallArm, drive.smallArm, 142, bigArm);
@@ -55,8 +57,17 @@ public class TeleopAuto extends LinearOpMode {
         drive.smallArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         TrajectoryActionBuilder tab1 = drive.actionBuilder(beginPose)
-                .splineToLinearHeading(basketScore, Math.PI);
+                .splineToLinearHeading(basketScore, Math.PI);//.turnTo(Math.PI/1.5)
+                //.strafeTo(new Vector2d(-37, -39)).strafeTo(new Vector2d(-39, -37));
 
+       TrajectoryActionBuilder tab2 = drive.actionBuilder(basketScore).turnTo(Math.PI/1.3)
+               .strafeTo(new Vector2d(-28.5, -37));
+
+       TrajectoryActionBuilder tab3 = drive.actionBuilder(new Pose2d(-32, -35, Math.PI/1.3))
+               .strafeTo(new Vector2d(-41, -31));
+
+       TrajectoryActionBuilder tab4 = drive.actionBuilder(beginPose)
+               .lineToY(-35).lineToY(-34);
 
         bigArm.setTarget(-37);
         smallArm.setTarget(142);
@@ -64,14 +75,23 @@ public class TeleopAuto extends LinearOpMode {
         Actions.runBlocking(
                 new SequentialAction(
                         //autoComm.initializeArm(telemetry),
-                         tab1.build()
+                        tab1.build(),
+                       getScoreLowBasketAction(smallArm, bigArm, drive),
+                        getHomeAction(smallArm, bigArm, drive),
+                        tab2.build(),
+                        getIntakeAction(smallArm, bigArm, drive),
 
+                        tab3.build()
                 )
         );
 
-        doArmStuff(smallArm, bigArm, 75.6, 94.2, 3);
-        drive.intake.setPower(1);
-        sleep(1500);
+        //doArmStuff(smallArm, bigArm, 141.9, -38, 2);
+
+        //Actions.runBlocking(tab2.build());
+
+
+
+
 
         /*while(opModeIsActive()){
 
@@ -204,6 +224,43 @@ public class TeleopAuto extends LinearOpMode {
 
         }*/
     }
+
+    Action getScoreLowBasketAction(Arm smallArm, Arm bigArm, MecanumDrive drive){
+        return new Action() {
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                doArmStuff(smallArm, bigArm, 75.6, 94.2, 1.5);
+                drive.intake.setPower(1);
+                sleep(1500);
+                return false;
+            }
+        };
+    }
+
+    Action getHomeAction(Arm smallArm, Arm bigArm, MecanumDrive drive){
+        return new Action() {
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                doArmStuff(smallArm, bigArm, 141.9, -38, 5);
+                drive.intake.setPower(0);
+                return false;
+            }
+        };
+    }
+
+    Action getIntakeAction(Arm smallArm, Arm bigArm, MecanumDrive drive){
+        return new Action() {
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                doArmStuff(smallArm, bigArm, 30 , -37, 3);
+                smallArm.setManual(0);
+                drive.intake.setPower(-1);
+                sleep(1500);
+                return false;
+            }
+        };
+    }
+
 
     void doArmStuff(Arm smallArm, Arm bigArm, double smallArmPos, double bigArmPos, double time){
         double x = getRuntime();
