@@ -27,7 +27,6 @@ public class RRSimpleAuto extends LinearOpMode {
         Pose2d beginPose = new Pose2d(0, -62, Math.PI /2);
         if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
             MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
-            AutonCommands autoComm = new AutonCommands(hardwareMap, beginPose);
             Arm bigArm = new Arm(drive.leftBigArm, drive.rightBigArm, drive.leftFront, -37);
             Arm smallArm = new Arm(drive.smallArm, drive.smallArm, 142, bigArm);
             Vector2d pos = new Vector2d(-52,-52);
@@ -66,9 +65,9 @@ public class RRSimpleAuto extends LinearOpMode {
             Actions.runBlocking(
                     new SequentialAction(
                             //autoComm.initializeArm(telemetry),
-                            tab1.build(),
-                            autoComm.setIntakePower(-1),
-                            autoComm.runArmToPosition(telemetry, 75.6, 94.2)
+                            tab1.build()//,
+                            //autoComm.setIntakePower(-1),
+                            //autoComm.runArmToPosition(telemetry, 75.6, 94.2)
                 )
             );
 
