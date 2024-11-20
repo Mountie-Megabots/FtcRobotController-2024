@@ -18,7 +18,7 @@ public class Teleop extends LinearOpMode {
         Pose2d beginPose = new Pose2d(0, 0, 0);
         MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
         Arm bigArm = new Arm(drive.leftBigArm, drive.rightBigArm, drive.leftFront, -37);
-        Arm smallArm = new Arm(drive.smallArm, drive.smallArm, 142, bigArm);
+        Arm smallArm = new Arm(drive.smallArm, drive.smallArm, 127, bigArm);
 
         drive.leftBigArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         drive.rightBigArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -105,12 +105,12 @@ public class Teleop extends LinearOpMode {
 
             // Home Position
             if (gamepad2.a) {
-                smallArm.setTarget(141.9);
+                smallArm.setTarget(126.9);
                 bigArm.setTarget(-38);
             }
             // Intake Position
             else if (gamepad2.x) {
-                smallArm.setTarget(34);
+                smallArm.setTarget(22);
                 bigArm.setTarget(-37);
 
             }
