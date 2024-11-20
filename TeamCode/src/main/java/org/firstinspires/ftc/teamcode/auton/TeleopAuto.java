@@ -31,6 +31,7 @@ public class TeleopAuto extends LinearOpMode {
         Arm bigArm = new Arm(drive.leftBigArm, drive.rightBigArm, drive.leftFront, -37);
         Arm smallArm = new Arm(drive.smallArm, drive.smallArm, 142, bigArm);
         AutonCommands autoComm = new AutonCommands(hardwareMap, beginPose);
+        Pose2d lastPose = beginPose;
 
         drive.leftBigArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         drive.rightBigArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -61,13 +62,16 @@ public class TeleopAuto extends LinearOpMode {
                 //.strafeTo(new Vector2d(-37, -39)).strafeTo(new Vector2d(-39, -37));
 
        TrajectoryActionBuilder tab2 = drive.actionBuilder(basketScore).turnTo(Math.PI/1.3)
-               .strafeTo(new Vector2d(-28.5, -37));
+               .strafeTo(new Vector2d(-30, -37));
 
        TrajectoryActionBuilder tab3 = drive.actionBuilder(new Pose2d(-32, -35, Math.PI/1.3))
-               .strafeTo(new Vector2d(-41, -31));
+               .strafeTo(new Vector2d(-42, -31));
 
-       TrajectoryActionBuilder tab4 = drive.actionBuilder(beginPose)
-               .lineToY(-35).lineToY(-34);
+       TrajectoryActionBuilder returnToBasket = drive.actionBuilder(beginPose)
+               .strafeToLinearHeading(basketScore.position, Math.PI/4);
+
+       TrajectoryActionBuilder prepIntakePosOne = drive.actionBuilder(new Pose2d(-41, -31, Math.PI/1.3))
+               .strafeToLinearHeading(new Vector2d(-40, -25),Math.PI);
 
         bigArm.setTarget(-37);
         smallArm.setTarget(142);
@@ -76,12 +80,18 @@ public class TeleopAuto extends LinearOpMode {
                 new SequentialAction(
                         //autoComm.initializeArm(telemetry),
                         tab1.build(),
-                       getScoreLowBasketAction(smallArm, bigArm, drive),
+                        getScoreLowBasketAction(smallArm, bigArm, drive),
                         getHomeAction(smallArm, bigArm, drive),
                         tab2.build(),
                         getIntakeAction(smallArm, bigArm, drive),
 
                         tab3.build()
+
+                        //getHomeAction(smallArm, bigArm, drive), returnToBasket.build(), getScoreLowBasketAction(smallArm,bigArm,drive),
+                        //prepIntakePosOne.build(), getIntakeAction(smallArm, bigArm, drive), drive.actionBuilder(drive.pose).strafeTo(new Vector2d(-55, -25)).build(),
+                        //getHomeAction(smallArm, bigArm, drive), returnToBasket.build(), getScoreLowBasketAction(smallArm, bigArm, drive)
+
+
                 )
         );
 
@@ -231,7 +241,7 @@ public class TeleopAuto extends LinearOpMode {
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
                 doArmStuff(smallArm, bigArm, 75.6, 94.2, 1.5);
                 drive.intake.setPower(1);
-                sleep(1500);
+                //sleep(1500);
                 return false;
             }
         };
