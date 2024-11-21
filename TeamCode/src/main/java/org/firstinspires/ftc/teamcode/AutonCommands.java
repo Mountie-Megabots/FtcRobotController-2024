@@ -40,7 +40,7 @@ public final class AutonCommands{
         return new SequentialAction(
                 AutonCommands.setArmPositionLowBasket(),
                 new SleepAction(2),
-                AutonCommands.setIntakePower(.2),
+                AutonCommands.setIntakePower(.5),
                 new SleepAction(2),
                 AutonCommands.setArmPositionHome(),
                 new SleepAction(1));

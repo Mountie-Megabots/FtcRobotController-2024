@@ -24,13 +24,13 @@ public class MeepMeepTesting {
         RoadRunnerBotEntity specimenScore = new DefaultBotBuilder(meepMeep)
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .build();
-        RoadRunnerBotEntity specimenScoreThenObs = new DefaultBotBuilder(meepMeep)
+        RoadRunnerBotEntity scoreObservation = new DefaultBotBuilder(meepMeep)
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .build();
 //-62 mid start
         basketScorer.runAction(basketScorer.getDrive().actionBuilder(new Pose2d(-33, -62, Math.PI/2))
                 .splineToLinearHeading(basketScore, Math.PI).turnTo(Math.PI/1.3)
-                .strafeTo(new Vector2d(-28.5, -37)).strafeTo(new Vector2d(-41, -31)).strafeToLinearHeading(basketScore.position, Math.PI/4)
+                .strafeTo(new Vector2d(-28.5, -39)).strafeTo(new Vector2d(-41, -31)).strafeToLinearHeading(basketScore.position, Math.PI/4)
                 .strafeToLinearHeading(new Vector2d(-40, -25),Math.PI).strafeTo(new Vector2d(-55, -25)).strafeToLinearHeading(basketScore.position, Math.PI/4)
                 .strafeToLinearHeading(new Vector2d(-50, -25), Math.PI).strafeTo(new Vector2d(-54, -25)).strafeToLinearHeading(basketScore.position, Math.PI/4).build());
 
@@ -45,18 +45,18 @@ public class MeepMeepTesting {
                 .strafeTo(new Vector2d(45, -55)).strafeTo(new Vector2d(45, -10)).strafeTo(new Vector2d(55, -10)).strafeTo(new Vector2d(55, -55))
                 .strafeTo(new Vector2d(55, -10)).strafeTo(new Vector2d(60, -10)).strafeTo(new Vector2d(60, -55)).build());
 
-        specimenScoreThenObs.runAction(specimenScoreThenObs.getDrive().actionBuilder(new Pose2d(0,-62, Math.PI/2))
-                .lineToY(-34).lineToY(-37).strafeTo(new Vector2d(-36, -37)).strafeTo(new Vector2d(-36, -10)).strafeTo(new Vector2d(-45, -10))
+        scoreObservation.runAction(scoreObservation.getDrive().actionBuilder(new Pose2d(-33,-62, Math.PI/2))
+                .strafeTo(new Vector2d(-36, -34)).strafeTo(new Vector2d(-40, -34)).strafeTo(new Vector2d(-36, -10)).strafeTo(new Vector2d(-45, -10))
                 .strafeTo(new Vector2d(-45, -55)).strafeTo(new Vector2d(-45, -10)).strafeTo(new Vector2d(-55, -10)).strafeTo(new Vector2d(-55, -48))
-                .strafeTo(new Vector2d(-55, -10)).strafeTo(new Vector2d(-60, -10)).strafeTo(new Vector2d(-60, -46)).build());
+                .strafeTo(new Vector2d(-55, -10)).strafeTo(new Vector2d(-62, -10)).strafeTo(new Vector2d(-62, -46)).strafeToLinearHeading(new Vector2d(-30, 5), Math.PI).build());
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_JUICE_DARK)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
                 //.addEntity(basketScorer)
                 //.addEntity(anotherBot)
-                .addEntity(specimenScore)
-                //.addEntity(specimenScoreThenObs)
+                //.addEntity(specimenScore)
+                .addEntity(scoreObservation)
                 .start();
     }
 }
