@@ -20,13 +20,14 @@ public class Teleop extends LinearOpMode {
         Arm bigArm = new Arm(drive.leftBigArm, drive.rightBigArm, drive.leftFront, -37);
         Arm smallArm = new Arm(drive.smallArm, drive.smallArm, 127, bigArm);
 
-        drive.leftBigArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        drive.rightBigArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        drive.smallArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        drive.leftBigArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        drive.rightBigArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        drive.smallArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         bigArm.setPID(.03, .1, 0);
         bigArm.setIZone(6);
-        smallArm.setPID(.01, 0, 0);
+        smallArm.setPID(.005, .01, 0);
+        smallArm.setIZone(6);
 
         // Set limits
         bigArm.setForwardLimit(126.4);
@@ -45,7 +46,7 @@ public class Teleop extends LinearOpMode {
 
 
         bigArm.setTarget(-37);
-        smallArm.setTarget(142);
+        smallArm.setTarget(127);
 
 
 
@@ -105,7 +106,7 @@ public class Teleop extends LinearOpMode {
 
             // Home Position
             if (gamepad2.a) {
-                smallArm.setTarget(126.9);
+                smallArm.setTarget(127);
                 bigArm.setTarget(-38);
             }
             // Intake Position
@@ -126,7 +127,7 @@ public class Teleop extends LinearOpMode {
             }
 
             if(Math.abs(gamepad2.right_stick_y) > 0.05){
-                smallArm.setManual(-gamepad2.right_stick_y);
+                smallArm.setManual(-gamepad2.right_stick_y/1.5);
             }
             else{
                 smallArm.setManual(0);

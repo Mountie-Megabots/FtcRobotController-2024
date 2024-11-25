@@ -84,11 +84,13 @@ public class Arm {
 
         double motorSpeed = 0;
         double FF = this.getGravityFeedForward();
-        if(Math.abs(manual) > .05 && Math.abs(manual) > .75){
+        if(Math.abs(manual) > .05 && Math.abs(manual) < .8){
             motorSpeed = manual+FF;
+            this.setTarget(this.getPositionDegrees());
         }
-        else if(Math.abs(manual) >= .75){
+        else if(Math.abs(manual) >= .8){
             motorSpeed = manual;
+            this.setTarget(this.getPositionDegrees());
         }
         else{
             double pidValue = pid.calculate(goal, this.getPositionDegrees());
@@ -110,7 +112,7 @@ public class Arm {
             motor.setPower(motorSpeed);
         }
         else{
-            motor.setPower(motorSpeed/2);
+            motor.setPower(motorSpeed);
         }
 
         if(motor1 != null){

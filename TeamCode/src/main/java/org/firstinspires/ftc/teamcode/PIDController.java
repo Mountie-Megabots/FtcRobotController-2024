@@ -21,7 +21,7 @@ public class PIDController {
         double derivative = 0;
         double output = 0;
         long currentTime = System.currentTimeMillis();
-        long elaspsedTime = currentTime - lastTime;
+        double elaspsedTime = (currentTime - lastTime);
 
         if( goal != lastGoal){
             this.reset(goal, error);

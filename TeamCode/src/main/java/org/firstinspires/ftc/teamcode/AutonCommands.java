@@ -38,9 +38,10 @@ public final class AutonCommands{
 
     public static Action getScoreLowBasket(){
         return new SequentialAction(
+                AutonCommands.setSmallArmManual(0),
                 AutonCommands.setArmPositionLowBasket(),
                 new SleepAction(2),
-                AutonCommands.setIntakePower(.5),
+                AutonCommands.setIntakePower(.75),
                 new SleepAction(2),
                 AutonCommands.setArmPositionHome(),
                 new SleepAction(1));
@@ -48,10 +49,11 @@ public final class AutonCommands{
 
     public static Action getIntakeAction(){
         return new SequentialAction(
+                AutonCommands.setSmallArmManual(0),
                 AutonCommands.setIntakePower(-1),
                 AutonCommands.setArmPositionIntake(),
-                new SleepAction(.5),
-                AutonCommands.setSmallArmManual(.3));
+                AutonCommands.setSmallArmManual(-.5),
+                new SleepAction(.25));
     }
 
     public static Action setArmPositionLowBasket(){
@@ -70,6 +72,7 @@ public final class AutonCommands{
         return new Action() {
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                smallArm.setManual(0);
                 smallArm.setTarget(142);
                 bigArm.setTarget(-37);
                 return false;

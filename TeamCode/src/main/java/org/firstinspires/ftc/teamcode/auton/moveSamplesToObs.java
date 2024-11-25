@@ -1,9 +1,5 @@
 package org.firstinspires.ftc.teamcode.auton;
 
-import androidx.annotation.NonNull;
-
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
@@ -18,18 +14,15 @@ import org.firstinspires.ftc.teamcode.Arm;
 import org.firstinspires.ftc.teamcode.AutonCommands;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
-@Autonomous(name = "ScoreBasketAuto")
-public class TeleopAuto extends LinearOpMode {
-
-
+@Autonomous(name = "SamplesToObs")
+public class moveSamplesToObs extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Pose2d beginPose = new Pose2d(-33, -62, Math.PI /2);
+        Pose2d beginPose = new Pose2d(15,-62, Math.PI/2);
         MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
         Arm bigArm = new Arm(drive.leftBigArm, drive.rightBigArm, drive.leftFront, -37);
         Arm smallArm = new Arm(drive.smallArm, drive.smallArm, 142, bigArm);
-        Pose2d lastPose = beginPose;
 
 //        drive.leftBigArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        drive.rightBigArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -58,24 +51,25 @@ public class TeleopAuto extends LinearOpMode {
         drive.smallArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         TrajectoryActionBuilder tab1 = drive.actionBuilder(beginPose)
-                .splineToLinearHeading(basketScore, Math.PI);//.turnTo(Math.PI/1.5)
-                //.strafeTo(new Vector2d(-37, -39)).strafeTo(new Vector2d(-39, -37));
+                .strafeTo(new Vector2d(36, -37)).strafeTo(new Vector2d(36, -10)).strafeTo(new Vector2d(45, -10))
+                .strafeTo(new Vector2d(45, -55)).strafeTo(new Vector2d(45, -10)).strafeTo(new Vector2d(55, -10)).strafeTo(new Vector2d(55, -55))
+                .strafeTo(new Vector2d(55, -10)).strafeTo(new Vector2d(65, -10)).strafeTo(new Vector2d(65, -55));//.turnTo(Math.PI/1.5)
+        //.strafeTo(new Vector2d(-37, -39)).strafeTo(new Vector2d(-39, -37));
 
-       TrajectoryActionBuilder tab2 = drive.actionBuilder(basketScore).turnTo(Math.PI/1.3)
-               .strafeTo(new Vector2d(-29.5, -41));
+        TrajectoryActionBuilder dropOff = drive.actionBuilder(beginPose)
+                .splineToLinearHeading(basketScore, Math.PI);
 
-       TrajectoryActionBuilder tab3 = drive.actionBuilder(new Pose2d(-32, -35, Math.PI/1.3))
-               .strafeTo(new Vector2d(-41, -33));
+        TrajectoryActionBuilder tab2 = drive.actionBuilder(basketScore).turnTo(Math.PI/1.3)
+                .strafeTo(new Vector2d(-28.5, -39));
 
-       TrajectoryActionBuilder returnToBasketOne = drive.actionBuilder(new Pose2d(-42, -31,Math.PI/1.3))
-               .strafeToLinearHeading(basketScore.position, Math.PI/4);
+        TrajectoryActionBuilder tab3 = drive.actionBuilder(new Pose2d(-32, -35, Math.PI/1.3))
+                .strafeTo(new Vector2d(-42, -31));
 
-       TrajectoryActionBuilder tab4 = drive.actionBuilder(new Pose2d(basketScore.position, Math.PI/4))
-               .strafeToLinearHeading(new Vector2d(-35, -26),Math.PI).strafeTo(new Vector2d(-45, -26))
-               .strafeToLinearHeading(basketScore.position, Math.PI/4);
+        TrajectoryActionBuilder returnToBasketOne = drive.actionBuilder(new Pose2d(-42, -31,Math.PI/1.3))
+                .strafeToLinearHeading(basketScore.position, Math.PI/4);
 
-       TrajectoryActionBuilder prepIntakePosOne = drive.actionBuilder(new Pose2d(-41, -31, Math.PI/1.3))
-               .strafeToLinearHeading(new Vector2d(-40, -25),Math.PI);
+        TrajectoryActionBuilder prepIntakePosOne = drive.actionBuilder(new Pose2d(-41, -31, Math.PI/1.3))
+                .strafeToLinearHeading(new Vector2d(-40, -25),Math.PI);
 
         bigArm.setTarget(-37);
         smallArm.setTarget(142);
@@ -89,20 +83,8 @@ public class TeleopAuto extends LinearOpMode {
 
         Actions.runBlocking(
                 new ParallelAction(
-                        AutonCommands.runArmPeriodic(),
-                        new SequentialAction(
-                                tab1.build(),
-                                AutonCommands.getScoreLowBasket(),
-                                tab2.build(),
-                                AutonCommands.getIntakeAction(),
-                                tab3.build(),
-                                AutonCommands.setArmPositionHome(),
-                                returnToBasketOne.build(),
-                                AutonCommands.getScoreLowBasket(),
-                                AutonCommands.getIntakeAction(),
-                                tab4.build(),
-                                AutonCommands.getScoreLowBasket()
-                        )
+                        tab1.build(),
+                        AutonCommands.runArmPeriodic()
                 )
 
         );
@@ -111,4 +93,3 @@ public class TeleopAuto extends LinearOpMode {
 
 
 }
-

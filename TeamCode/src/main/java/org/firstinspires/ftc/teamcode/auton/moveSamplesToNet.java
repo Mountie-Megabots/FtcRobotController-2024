@@ -17,8 +17,6 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 @Autonomous(name = "SamplesToNetZone")
 public class moveSamplesToNet extends LinearOpMode {
 
-
-
     @Override
     public void runOpMode() throws InterruptedException {
         Pose2d beginPose = new Pose2d(-33,-62, Math.PI/2);
@@ -27,9 +25,9 @@ public class moveSamplesToNet extends LinearOpMode {
         Arm smallArm = new Arm(drive.smallArm, drive.smallArm, 142, bigArm);
         Pose2d lastPose = beginPose;
 
-        drive.leftBigArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        drive.rightBigArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        drive.smallArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        drive.leftBigArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        drive.rightBigArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        drive.smallArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         bigArm.setPID(.03, .1, 0);
         bigArm.setIZone(6);
@@ -42,7 +40,7 @@ public class moveSamplesToNet extends LinearOpMode {
         smallArm.setForwardLimit(141);
         smallArm.setBackwardLimit(-117.6);
 
-        Pose2d basketScore = new Pose2d(-52,-50, Math.PI/4);
+        Pose2d basketScore = new Pose2d(-53,-51, Math.PI/4);
 
         AutonCommands.initAutonCommands(drive, smallArm, bigArm, telemetry);
 
@@ -53,11 +51,14 @@ public class moveSamplesToNet extends LinearOpMode {
         drive.rightBigArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         drive.smallArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        TrajectoryActionBuilder tab1 = drive.actionBuilder(beginPose)
-                .strafeTo(new Vector2d(-36, -34)).strafeTo(new Vector2d(-43, -34)).strafeTo(new Vector2d(-36, -10)).strafeTo(new Vector2d(-47.5, -10))
-                .strafeTo(new Vector2d(-47.5, -55)).strafeTo(new Vector2d(-47.5, -10)).strafeTo(new Vector2d(-55, -10)).strafeTo(new Vector2d(-55, -48))
-                .strafeTo(new Vector2d(-55, -10)).strafeTo(new Vector2d(-64, -10)).strafeTo(new Vector2d(-64, -46)).strafeToLinearHeading(new Vector2d(-27.5, 5), Math.PI);//.turnTo(Math.PI/1.5)
+        TrajectoryActionBuilder tab1 = drive.actionBuilder(basketScore)
+                .strafeTo(new Vector2d(-36, -34)).turnTo(Math.PI/2).strafeTo(new Vector2d(-36, -28)).strafeTo(new Vector2d(-40, -28)).strafeTo(new Vector2d(-36, -10)).strafeTo(new Vector2d(-45, -10))
+                .strafeTo(new Vector2d(-45, -55)).strafeTo(new Vector2d(-45, -10)).strafeTo(new Vector2d(-55, -10)).strafeTo(new Vector2d(-55, -48))
+                .strafeTo(new Vector2d(-55, -10)).strafeTo(new Vector2d(-62, -10)).strafeTo(new Vector2d(-62, -46)).strafeTo(new Vector2d(-50, -5)).strafeToLinearHeading(new Vector2d(-25,-5), Math.PI);//.turnTo(Math.PI/1.5)
         //.strafeTo(new Vector2d(-37, -39)).strafeTo(new Vector2d(-39, -37));
+
+        TrajectoryActionBuilder dropOff = drive.actionBuilder(beginPose)
+                .splineToLinearHeading(basketScore, Math.PI);
 
         TrajectoryActionBuilder tab2 = drive.actionBuilder(basketScore).turnTo(Math.PI/1.3)
                 .strafeTo(new Vector2d(-28.5, -39));
@@ -84,6 +85,9 @@ public class moveSamplesToNet extends LinearOpMode {
         Actions.runBlocking(
                 new ParallelAction(
                     new SequentialAction(
+                            dropOff.build(),
+                            AutonCommands.getScoreLowBasket(),
+                        AutonCommands.setArmPositionHome(),
                         tab1.build(),
                         AutonCommands.setArmPositionLowBasket()
                     ),
