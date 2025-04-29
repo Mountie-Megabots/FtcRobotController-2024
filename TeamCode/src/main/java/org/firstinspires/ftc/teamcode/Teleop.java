@@ -95,7 +95,9 @@ public class Teleop extends LinearOpMode {
 
             if(gamepad2.y && !bigArm.climbMode){
                 bigArm.climbMode = true;
-            } else if(gamepad2.y && bigArm.climbMode){
+            }
+
+            if(gamepad2.dpad_up && bigArm.climbMode){
                 bigArm.climbMode = false;
             }
 

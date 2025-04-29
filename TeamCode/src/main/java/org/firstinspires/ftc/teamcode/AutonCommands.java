@@ -36,7 +36,7 @@ public final class AutonCommands{
         };
     }
 
-    public static Action getScoreLowBasket(){
+    public static Action getScoreLowBasket() {
         return new SequentialAction(
                 AutonCommands.setSmallArmManual(0),
                 AutonCommands.setArmPositionLowBasket(),
@@ -45,6 +45,31 @@ public final class AutonCommands{
                 new SleepAction(2),
                 AutonCommands.setArmPositionHome(),
                 new SleepAction(1));
+    }
+    public Action runArmToPosition(Telemetry telemetry, double smallArmGoal, double bigArmGoal){
+        return new Action() {
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                /*if(smallArm.getTarget() != smallArmGoal){
+                    smallArm.setTarget(smallArmGoal);
+                }
+
+                if(bigArm.getTarget() != bigArmGoal){
+                    bigArm.setTarget(bigArmGoal);
+                }*/
+
+
+                smallArm.periodic();
+                bigArm.periodic();
+
+                bigArm.writeTelemetry(telemetry, "bigArm");
+                smallArm.writeTelemetry(telemetry,"smallArm");
+                telemetry.update();
+
+                return !smallArm.atGoal() || !bigArm.atGoal();
+            }
+        };
     }
 
     public static Action getIntakeAction(){

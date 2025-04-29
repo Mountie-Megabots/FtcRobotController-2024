@@ -84,6 +84,7 @@ public class Arm {
 
         double motorSpeed = 0;
         double FF = this.getGravityFeedForward();
+
         if(Math.abs(manual) > .05 && Math.abs(manual) < .8){
             motorSpeed = manual+FF;
             this.setTarget(this.getPositionDegrees());
@@ -92,10 +93,14 @@ public class Arm {
             motorSpeed = manual;
             this.setTarget(this.getPositionDegrees());
         }
-        else{
+        else if( (getPositionDegrees() > -35 || !atGoal()) || base != null){
             double pidValue = pid.calculate(goal, this.getPositionDegrees());
             motorSpeed = pidValue + FF;
         }
+        else{
+            motorSpeed = 0;
+        }
+
 
         // Enforce limits
         if(!climbMode){
